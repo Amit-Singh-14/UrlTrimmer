@@ -8,6 +8,7 @@ import Error from "./Error";
 import { login } from "@/db/ApiAuth";
 import { BeatLoader } from "react-spinners";
 import useFetch from "@/hooks/useFetch";
+import { UrlState } from "@/context";
 
 const Login = () => {
   let [searchParams] = useSearchParams();
@@ -29,10 +30,13 @@ const Login = () => {
   };
 
   const { loading, error, fn: fnLogin, data } = useFetch(login, formData);
-  // const { fetchUser } = UrlState();
+  const { fetchUser } = UrlState();
 
   useEffect(() => {
-    console.log(data, error, loading);
+    if (error == null && data) {
+      fetchUser();
+      navigate(`/dashboard?${longLink ? `createNew=${longLink}` : ""}`);
+    }
   }, [error, data]);
 
   const handleLogin = async () => {

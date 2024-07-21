@@ -13,11 +13,17 @@ function LandingPage() {
   const [longUrl, setLongUrl] = useState("");
   const navigate = useNavigate();
 
-  const handleShorten = () => {};
+  const handleShorten = (e) => {
+    e.preventDefault();
+    if (longUrl) {
+      navigate(`/auth?createNew=${longUrl}`);
+    }
+  };
+
   return (
     <div className="flex flex-col items-center">
       <h2 className="my-10 sm:my-16 text-3xl sm:text-6xl lg:text-7xl text-white text-center font-extrabold">
-        The only URL Shortener <br /> you&rsquo;ll ever need! 👇
+        URL Shortener! 👇
       </h2>
       <form
         onSubmit={handleShorten}
@@ -34,11 +40,8 @@ function LandingPage() {
           Shorten!
         </Button>
       </form>
-      <img
-        src="/banner2.jpg" // replace with 2 in small screens
-        className="w-full my-11 md:px-11"
-      />
-      <Accordion type="multiple" collapsible className="w-full md:px-11">
+
+      <Accordion type="multiple" className="w-full md:px-11 mt-4">
         <AccordionItem value="item-1">
           <AccordionTrigger>How does the Trimrr URL shortener works?</AccordionTrigger>
           <AccordionContent>

@@ -1,4 +1,3 @@
-import "./App.css";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import AppLayout from "./layouts/AppLayout";
 import LandingPage from "./pages/LandingPage";
@@ -6,6 +5,7 @@ import DashBoard from "./pages/DashBoard";
 import Auth from "./pages/Auth";
 import Link from "./pages/Link";
 import RedirectLink from "./pages/RedirectLink";
+import Required_Auth from "./components/Required_Auth";
 
 function App() {
   const router = createBrowserRouter([
@@ -18,7 +18,11 @@ function App() {
         },
         {
           path: "/dashboard",
-          element: <DashBoard />,
+          element: (
+            <Required_Auth>
+              <DashBoard />
+            </Required_Auth>
+          ),
         },
         {
           path: "/auth",
@@ -26,7 +30,11 @@ function App() {
         },
         {
           path: "/link/:id",
-          element: <Link />,
+          element: (
+            <Required_Auth>
+              <Link />
+            </Required_Auth>
+          ),
         },
         {
           path: "/:id",
