@@ -29,7 +29,7 @@ function CreateLink() {
 
   const [formValues, setFormValues] = useState({
     title: "",
-    longUrl: longLink ? longLink : "",
+    LongUrl: longLink ? longLink : "",
     customUrl: "",
   });
 
@@ -37,7 +37,7 @@ function CreateLink() {
 
   const formSchema = yup.object().shape({
     title: yup.string().required("Title is requried."),
-    longUrl: yup.string().url("Must be a valid URL").required("Long URl is required."),
+    LongUrl: yup.string().url("Must be a valid URL").required("Long URl is required."),
     customUrl: yup.string(),
   });
 
@@ -95,7 +95,7 @@ function CreateLink() {
           <DialogTitle className="font-bold text-2xl">Create New</DialogTitle>
         </DialogHeader>
 
-        {formValues?.longUrl && <QRCode value={formValues.longUrl} size={150} ref={qrRef} />}
+        {formValues?.LongUrl && <QRCode value={formValues.LongUrl} size={150} ref={qrRef} />}
 
         <Input
           id="title"
@@ -106,12 +106,12 @@ function CreateLink() {
         {error.title && <Error message={error.title} />}
 
         <Input
-          id="longUrl"
-          value={formValues.longUrl}
+          id="LongUrl"
+          value={formValues.LongUrl}
           onChange={handleChange}
           placeholder="Enter your loonggg URL"
         />
-        {error.longUrl && <Error message={error.longUrl} />}
+        {error.LongUrl && <Error message={error.LongUrl} />}
 
         <div className=" flex items-center gap-2">
           <Card className="p-2"> trimmer.in </Card>/
