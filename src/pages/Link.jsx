@@ -1,5 +1,3 @@
-// import DeviceStats from "@/components/device-stats";
-// import Location from "@/components/location-stats";
 import DeviceStats from "@/components/DeviceStats";
 import LocationStats from "@/components/LocationStats";
 import { Button } from "@/components/ui/button";
@@ -10,11 +8,12 @@ import { deleteUrl, getUrl } from "@/db/ApiUrl";
 import useFetch from "@/hooks/useFetch";
 
 import { Copy, Download, LinkIcon, Trash } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { BarLoader, BeatLoader } from "react-spinners";
 
 const LinkPage = () => {
+    const [qrLoaded, setQrLoaded] = useState(false);
     const downloadImage = () => {
         const imageUrl = url?.qr;
         const fileName = url?.title;
@@ -43,11 +42,15 @@ const LinkPage = () => {
     const { loading: loadingDelete, fn: fnDelete } = useFetch(deleteUrl, id);
 
     useEffect(() => {
-        fn();
+        if (url == null) {
+            fn();
+        }
     }, []);
 
     useEffect(() => {
-        if (!error && loading === false) fnStats();
+        if (url != null && !error && loading === false) {
+            fnStats();
+        }
     }, [loading, error]);
 
     if (error) {
@@ -59,18 +62,20 @@ const LinkPage = () => {
         link = url?.custom_url ? url?.custom_url : url.short_url;
     }
 
+    // console.log(url);
+
     return (
         <>
             {(loading || loadingStats) && <BarLoader className="mb-4" width={"100%"} color="#36d7b7" />}
-            <div className="flex flex-col gap-8 sm:flex-row justify-between">
-                <div className="flex flex-col items-start gap-8 rounded-lg sm:w-2/5">
-                    <span className="text-6xl font-extrabold hover:underline cursor-pointer">{url?.title}</span>
+            <div className="flex flex-col gap-8 md:flex-row justify-between">
+                <div className="flex flex-col items-start gap-5 rounded-lg sm:w-2/5">
+                    <span className="text-3xl font-extrabold hover:underline cursor-pointer">{url?.title}</span>
                     <a
-                        href={`http://localhost:5173/${link}`}
+                        href={`${import.meta.env.VITE_BASE_URL}/${link}`}
                         target="_blank"
-                        className="text-3xl sm:text-4xl text-blue-400 font-bold hover:underline cursor-pointer"
+                        className="text-3xl sm:text-2xl text-blue-400 font-bold hover:underline cursor-pointer"
                     >
-                        http://localhost:5173/{link}
+                        {import.meta.env.VITE_BASE_URL}/{link}
                     </a>
                     <a href={url?.original_url} target="_blank" className="flex items-center gap-1 hover:underline cursor-pointer">
                         <LinkIcon className="p-1" />
@@ -78,7 +83,7 @@ const LinkPage = () => {
                     </a>
                     <span className="flex items-end font-extralight text-sm">{new Date(url?.created_at).toLocaleString()}</span>
                     <div className="flex gap-2">
-                        <Button variant="ghost" onClick={() => navigator.clipboard.writeText(`http://localhost:5173/${link}`)}>
+                        <Button variant="ghost" onClick={() => navigator.clipboard.writeText(`${import.meta.env.VITE_BASE_URL}/${link}`)}>
                             <Copy />
                         </Button>
                         <Button variant="ghost" onClick={downloadImage}>
@@ -96,10 +101,18 @@ const LinkPage = () => {
                             {loadingDelete ? <BeatLoader size={5} color="white" /> : <Trash />}
                         </Button>
                     </div>
-                    <img src={url?.qr} className="w-full self-center sm:self-start ring ring-blue-500 p-1 object-contain" alt="qr code" />
+                    {url?.qr && (
+                        <img
+                            src={url?.qr}
+                            className={`w-full md:w-3/5 self-center ring ring-blue-500 p-1 object-contain ${qrLoaded ? "" : "hidden"}`}
+                            alt="qr code"
+                            onLoad={() => setQrLoaded(true)}
+                        />
+                    )}
+                    {!qrLoaded && <BarLoader width="100%" color="#36d7b7" />}
                 </div>
 
-                <Card className="sm:w-3/5">
+                <Card className="md:w-3/5">
                     <CardHeader>
                         <CardTitle className="text-4xl font-extrabold">Stats</CardTitle>
                     </CardHeader>
@@ -114,12 +127,20 @@ const LinkPage = () => {
                                 </CardContent>
                             </Card>
 
-                            <CardTitle>Location Data</CardTitle>
-                            {/* <Location stats={stats} /> */}
-                            <LocationStats stats={stats} />
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle>Location Data</CardTitle>
+                                </CardHeader>
+                                {/* <Location stats={stats} /> */}
+                                <LocationStats stats={stats} />
+                            </Card>
 
-                            <CardTitle>Device Info</CardTitle>
-                            <DeviceStats stats={stats} />
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle>Device Info</CardTitle>
+                                </CardHeader>
+                                <DeviceStats stats={stats} />
+                            </Card>
                         </CardContent>
                     ) : (
                         <CardContent>{loadingStats === false ? "No Statistics yet" : "Loading Statistics.."}</CardContent>
