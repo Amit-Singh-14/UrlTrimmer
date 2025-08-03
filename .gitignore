@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+deployment.md
+vercel_deploy.md
+html_customization.md
+social_links_config.md
